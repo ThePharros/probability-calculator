@@ -1,4 +1,4 @@
-package com.probabilitycalculator;
+package com;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;

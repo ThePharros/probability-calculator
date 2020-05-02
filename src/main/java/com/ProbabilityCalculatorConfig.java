@@ -1,19 +1,19 @@
-package com.probabilitycalculator;
+package com;
 
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("example")
+@ConfigGroup("probability_calculator")
 public interface ProbabilityCalculatorConfig extends Config
 {
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
+		keyName = "decimalPlaces",
+		name = "Decimal Places",
+		description = "The number of decimal places to round the output to"
 	)
-	default String greeting()
+	default int greeting()
 	{
-		return "Hello";
+		return 4;
 	}
 }
