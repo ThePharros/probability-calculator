@@ -1,5 +1,6 @@
 package com;
 
+import lombok.Setter;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 
@@ -9,31 +10,36 @@ import javax.swing.BorderFactory;
 import java.awt.*;
 import java.text.DecimalFormat;
 
+@Setter
 public class ProbabilityCalculatorOutputArea extends JPanel {
 
     private String outputMsg = "Awaiting input...";
     private DecimalFormat df = new DecimalFormat("#.####");
-    private final JTextArea textArea;
+    private JTextArea textArea;
     private double atLeastChance;
     private double zeroChance;
     private double exactChance;
     private String strAtLeastChance;
     private String strExactChance;
     private String strZeroChance;
+    private int killCount;
+    private int dropsReceived;
+    private double dropRate;
 
-    ProbabilityCalculatorOutputArea(double dropRate, int killCount, int exactDrops) {
+    ProbabilityCalculatorOutputArea(double dropRate, int killCount, int dropsReceived) {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(ColorScheme.DARKER_GRAY_COLOR, 5));
         setBackground(ColorScheme.DARK_GRAY_HOVER_COLOR);
 
-        //calculateProbabilities(dropRate, killCount, exactDrops);
-
+        this.killCount = killCount;
+        this.dropsReceived = dropsReceived;
+        this.dropRate = dropRate;
+        calculateProbabilities();
         textArea = new JTextArea(outputMsg);
         textArea.setEditable(false);
         textArea.setFont(FontManager.getRunescapeBoldFont());
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
-
         add(textArea);
 
     }
@@ -72,19 +78,19 @@ public class ProbabilityCalculatorOutputArea extends JPanel {
         return nCx(n, x) * Math.pow(p, x) * (Math.pow(1.0-p, n-x));
     }
 
-    private void calculateProbabilities(double dropRate, double killCount, double exactDrops) {
-        if (killCount < exactDrops) {
+    void calculateProbabilities() {
+        if (killCount < dropsReceived) {
             outputMsg = "You've somehow cheated the RNG gods and managed to get more drops than you got kills. What is this sorcery?!";
         } else if (dropRate > 1.0 || dropRate < 0.0) {
             outputMsg = "Please use a drop rate value between 0.0 and 1.0.";
         } else {
-            exactChance = binomialProb(killCount, exactDrops, dropRate);
+            exactChance = binomialProb(killCount, dropsReceived, dropRate);
             zeroChance = Math.pow(1.0-dropRate, killCount);
-            if (exactDrops == 1.0) {
+            if (dropsReceived == 1.0) {
                 atLeastChance = 1.0 - zeroChance;
             } else {
                 atLeastChance = 0.0;
-                for (int i = 0; i < exactDrops; i++) {
+                for (int i = 0; i < dropsReceived; i++) {
                     atLeastChance += binomialProb(killCount, i, dropRate);
                 }
                 atLeastChance = 1.0 - atLeastChance;
@@ -103,10 +109,23 @@ public class ProbabilityCalculatorOutputArea extends JPanel {
             if (strZeroChance.equals("0") || strZeroChance.equals("100")) {
                 strZeroChance = "~" + strZeroChance;
             }
-            outputMsg = "At " + (int)killCount + " kills, " + (int)exactDrops + " drop(s), and a drop rate of " + dropRate + ", your chances are:\n\n" +
-                    "Chance to get at least " + (int)exactDrops + " drop(s):\n" + strAtLeastChance + "%\n\n" +
-                    "Chance to get exactly " + (int)exactDrops + " drop(s):\n" + strExactChance + "%\n\n" +
+            outputMsg = "At " + (int)killCount + " kills, " + dropsReceived + " drop(s), and a drop rate of " + dropRate + ", your chances are:\n\n" +
+                    "Chance to get at least " + dropsReceived + " drop(s):\n" + strAtLeastChance + "%\n\n" +
+                    "Chance to get exactly " + dropsReceived + " drop(s):\n" + strExactChance + "%\n\n" +
                     "Chance to get zero drops:\n" + strZeroChance + "%";
         }
+    }
+
+    void updateTextArea() {
+        remove(textArea);
+        calculateProbabilities();
+        textArea = new JTextArea(outputMsg);
+        textArea.setEditable(false);
+        textArea.setFont(FontManager.getRunescapeBoldFont());
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        add(textArea);
+        revalidate();
+        repaint();
     }
 }

@@ -4,12 +4,14 @@ import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.components.FlatTextField;
 
+import lombok.Getter;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+@Getter
 public class ProbabilityCalculatorInputArea extends JPanel {
 
     private final JTextField uiDropRate;
@@ -24,9 +26,46 @@ public class ProbabilityCalculatorInputArea extends JPanel {
         uiDropsReceived = addComponent("Drops Received:");
     }
 
+    double getDropRateInput() {
+        return getInput(uiDropRate);
+    }
+
+    void setDropRateInput(double value) {
+        setInput(uiDropRate, value);
+    }
+
+    double getKillCountInput() {
+        return getInput(uiKillCount);
+    }
+
+    void setKillCountInput(int value) {
+        setInput(uiKillCount, value);
+    }
+
+    double getDropsReceivedInput() {
+        return getInput(uiDropsReceived);
+    }
+
+    void setDropsReceivedInput(int value) {
+        setInput(uiDropsReceived, value);
+    }
+
+    private double getInput(JTextField field) {
+        try {
+            //return Double.valueOf(field.getText().replaceAll("\\D", ""));
+            return Double.valueOf(field.getText());
+        } catch (NumberFormatException e) {
+            return 0.0;
+        }
+    }
+
+    private void setInput(JTextField field, Object value) {
+        field.setText(String.valueOf(value));
+    }
+
     private JTextField addComponent(String label) {
         final JPanel container = new JPanel();
-        container.setLayout(new GridLayout(1,2,0,4));
+        container.setLayout(new GridLayout(1, 2, 0, 4));
 
         final JLabel uiLabel = new JLabel(label);
         final FlatTextField uiInput = new FlatTextField();
