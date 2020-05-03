@@ -13,20 +13,22 @@ import java.text.DecimalFormat;
 @Setter
 public class ProbabilityCalculatorOutputArea extends JPanel {
 
-    private String outputMsg = "Awaiting input...";
-    private DecimalFormat df = new DecimalFormat("#.####");
     private JTextArea textArea;
     private double atLeastChance;
     private double zeroChance;
     private double exactChance;
-    private String strAtLeastChance;
-    private String strExactChance;
-    private String strZeroChance;
     private int killCount;
     private int dropsReceived;
     private double dropRate;
+    private String strAtLeastChance;
+    private String strExactChance;
+    private String strZeroChance;
+    private String outputMsg;
+    private DecimalFormat df;
+    private String dfPattern;
+    private final ProbabilityCalculatorConfig config;
 
-    ProbabilityCalculatorOutputArea(double dropRate, int killCount, int dropsReceived) {
+    ProbabilityCalculatorOutputArea(double dropRate, int killCount, int dropsReceived, ProbabilityCalculatorConfig config) {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createLineBorder(ColorScheme.DARKER_GRAY_COLOR, 5));
         setBackground(ColorScheme.DARK_GRAY_HOVER_COLOR);
@@ -34,7 +36,13 @@ public class ProbabilityCalculatorOutputArea extends JPanel {
         this.killCount = killCount;
         this.dropsReceived = dropsReceived;
         this.dropRate = dropRate;
+        this.config = config;
+
+        updatedfPattern();
+        df = new DecimalFormat(dfPattern);
+
         calculateProbabilities();
+
         textArea = new JTextArea(outputMsg);
         textArea.setEditable(false);
         textArea.setFont(FontManager.getRunescapeBoldFont());
@@ -96,20 +104,19 @@ public class ProbabilityCalculatorOutputArea extends JPanel {
                 atLeastChance = 1.0 - atLeastChance;
             }
 
-
-            strAtLeastChance = df.format(atLeastChance*100.0);
+            strAtLeastChance = df.format(Math.abs(atLeastChance*100.0));
             if (strAtLeastChance.equals("0") || strAtLeastChance.equals("100")) {
                 strAtLeastChance = "~" + strAtLeastChance;
             }
-            strExactChance = df.format(exactChance*100.0);
+            strExactChance = df.format(Math.abs(exactChance*100.0));
             if (strExactChance.equals("0") || strExactChance.equals("100")) {
                 strExactChance = "~" + strExactChance;
             }
-            strZeroChance = df.format(zeroChance*100.0);
+            strZeroChance = df.format(Math.abs(zeroChance*100.0));
             if (strZeroChance.equals("0") || strZeroChance.equals("100")) {
                 strZeroChance = "~" + strZeroChance;
             }
-            outputMsg = "At " + (int)killCount + " kills, " + dropsReceived + " drop(s), and a drop rate of " + dropRate + ", your chances are:\n\n" +
+            outputMsg = "At " + killCount + " kills, " + dropsReceived + " drop(s), and a drop rate of " + dropRate + ", your chances are:\n\n" +
                     "Chance to get at least " + dropsReceived + " drop(s):\n" + strAtLeastChance + "%\n\n" +
                     "Chance to get exactly " + dropsReceived + " drop(s):\n" + strExactChance + "%\n\n" +
                     "Chance to get zero drops:\n" + strZeroChance + "%";
@@ -118,6 +125,7 @@ public class ProbabilityCalculatorOutputArea extends JPanel {
 
     void updateTextArea() {
         remove(textArea);
+        updatedfPattern();
         calculateProbabilities();
         textArea = new JTextArea(outputMsg);
         textArea.setEditable(false);
@@ -127,5 +135,16 @@ public class ProbabilityCalculatorOutputArea extends JPanel {
         add(textArea);
         revalidate();
         repaint();
+    }
+
+    void updatedfPattern() {
+        if (config.getDecimalPlaces() > 0) {
+            dfPattern = "#.";
+            for (int i = 0; i < config.getDecimalPlaces(); i++) {
+                dfPattern += "#";
+            }
+        } else {
+            dfPattern = "#";
+        }
     }
 }

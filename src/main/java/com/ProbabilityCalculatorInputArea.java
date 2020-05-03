@@ -52,7 +52,10 @@ public class ProbabilityCalculatorInputArea extends JPanel {
 
     private double getInput(JTextField field) {
         try {
-            //return Double.valueOf(field.getText().replaceAll("\\D", ""));
+            if (field.getText().contains("/")) {
+                String[] fraction = field.getText().split("/");
+                return Double.valueOf(fraction[0])/Double.valueOf(fraction[1]);
+            }
             return Double.valueOf(field.getText());
         } catch (NumberFormatException e) {
             return 0.0;

@@ -2,22 +2,20 @@ package com;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
-import javax.swing.*;
 
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.GameState;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.client.config.ConfigManager;
-import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
 import net.runelite.client.util.ImageUtil;
 
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.image.BufferedImage;
+import java.util.function.Consumer;
 
 @Slf4j
 @PluginDescriptor(
@@ -45,25 +43,29 @@ public class ProbabilityCalculatorPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		log.info("Prob calc started!");
+		log.info("prob-calc: Plugin started!");
 		input = new ProbabilityCalculatorInputArea();
-		output = new ProbabilityCalculatorOutputArea(dropRate, killCount, dropsReceived);
+		output = new ProbabilityCalculatorOutputArea(dropRate, killCount, dropsReceived, config);
 		panel = new ProbabilityCalculatorPanel(input, output);
-		panel.init(config);
+		//panel.init(config);
 
 		final BufferedImage icon = ImageUtil.getResourceStreamFromClass(ProbabilityCalculatorPlugin.class, "probabilitycalculator_icon.png");
 
+		//Action listeners
 		input.getUiDropRate().addActionListener(e -> {
 			onFieldDropRateUpdated();
-			input.getUiKillCount().requestFocusInWindow();
 		});
 		input.getUiKillCount().addActionListener(e -> {
 			onFieldKillCountUpdated();
-			input.getUiDropsReceived().requestFocusInWindow();
 		});
 		input.getUiDropsReceived().addActionListener(e -> {
 			onFieldDropsReceivedUpdated();
 		});
+
+		//Focus listeners
+		input.getUiDropRate().addFocusListener(buildFocusAdapter(e -> onFieldDropRateUpdated()));
+		input.getUiKillCount().addFocusListener(buildFocusAdapter(e -> onFieldKillCountUpdated()));
+		input.getUiDropsReceived().addFocusListener(buildFocusAdapter(e -> onFieldDropsReceivedUpdated()));
 
 		updateInputFields();
 
@@ -75,6 +77,7 @@ public class ProbabilityCalculatorPlugin extends Plugin
 				.build();
 
 		clientToolbar.addNavigation(navButton);
+
 	}
 
 	private void onFieldDropRateUpdated() {
@@ -96,28 +99,28 @@ public class ProbabilityCalculatorPlugin extends Plugin
 		input.setDropRateInput(dropRate);
 		input.setDropsReceivedInput(dropsReceived);
 		input.setKillCountInput(killCount);
+
 		output.setDropRate(dropRate);
 		output.setKillCount(killCount);
 		output.setDropsReceived(dropsReceived);
 		output.updateTextArea();
 
-		log.info("Input fields updated!");
+		log.info("prob-calc: Input fields updated!");
 	}
 
+	private FocusAdapter buildFocusAdapter(Consumer<FocusEvent> focusLostConsumer) {
+		return new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				focusLostConsumer.accept(e);
+			}
+		};
+	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		log.info("Prob calc stopped!");
-	}
-
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", "Example says " + config.greeting(), null);
-		}
+		log.info("prob-calc: Plugin stopped!");
 	}
 
 	@Provides

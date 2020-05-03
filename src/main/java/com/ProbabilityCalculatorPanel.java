@@ -33,10 +33,10 @@ class ProbabilityCalculatorPanel extends PluginPanel {
         c.gridy++;
     }
 
-
+    /*
     void init(ProbabilityCalculatorConfig config) {
 
     }
-
+    */
 
 }
