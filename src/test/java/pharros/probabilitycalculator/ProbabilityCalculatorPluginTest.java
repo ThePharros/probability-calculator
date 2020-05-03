@@ -1,4 +1,4 @@
-package com;
+package pharros.probabilitycalculator;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;

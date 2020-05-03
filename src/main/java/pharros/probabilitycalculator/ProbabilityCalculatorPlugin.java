@@ -1,4 +1,4 @@
-package com;
+package pharros.probabilitycalculator;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
