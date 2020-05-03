@@ -39,7 +39,6 @@ public class ProbabilityCalculatorOutputArea extends JPanel {
         this.config = config;
 
         updatedfPattern();
-        df = new DecimalFormat(dfPattern);
 
         calculateProbabilities();
 
@@ -146,5 +145,7 @@ public class ProbabilityCalculatorOutputArea extends JPanel {
         } else {
             dfPattern = "#";
         }
+        df = new DecimalFormat(dfPattern);
+
     }
 }
