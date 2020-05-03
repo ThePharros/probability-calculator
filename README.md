@@ -11,6 +11,10 @@ This plugin provides a tool for calculating various probabilities for statistica
 3. Enter the amount of successful trials (number of actual drops received).
 4. Calculate and cry.
 
+#### Configuration
+
+You may configure how many decimal places the output will round up to in the configuration panel of the plugin. The default is set to 2 decimal places.
+
 ### The Math
 
 Drop rates are calculated as **binomial distributions**:

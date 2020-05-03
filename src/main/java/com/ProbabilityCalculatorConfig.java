@@ -16,6 +16,6 @@ public interface ProbabilityCalculatorConfig extends Config
 	)
 	default int getDecimalPlaces()
 	{
-		return 4;
+		return 2;
 	}
 }
