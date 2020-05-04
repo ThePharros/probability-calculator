@@ -120,6 +120,7 @@ public class ProbabilityCalculatorPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		clientToolbar.removeNavigation(navButton);
 		log.info("prob-calc: Plugin stopped!");
 	}
 
