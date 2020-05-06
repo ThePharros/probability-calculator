@@ -5,6 +5,7 @@ import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.components.FlatTextField;
 
 import lombok.Getter;
+
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
@@ -12,61 +13,75 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
 @Getter
-public class ProbabilityCalculatorInputArea extends JPanel {
+public class ProbabilityCalculatorInputArea extends JPanel
+{
 
     private final JTextField uiDropRate;
     private final JTextField uiKillCount;
     private final JTextField uiDropsReceived;
 
-    ProbabilityCalculatorInputArea() {
-        setLayout(new GridLayout(3,1,0,4));
+    ProbabilityCalculatorInputArea()
+    {
+        setLayout(new GridLayout(3, 1, 0, 4));
 
         uiDropRate = addComponent("Drop Rate:");
         uiKillCount = addComponent("Kill Count:");
         uiDropsReceived = addComponent("Drops Received:");
     }
 
-    double getDropRateInput() {
+    double getDropRateInput()
+    {
         return getInput(uiDropRate);
     }
 
-    void setDropRateInput(double value) {
+    void setDropRateInput(double value)
+    {
         setInput(uiDropRate, value);
     }
 
-    double getKillCountInput() {
+    double getKillCountInput()
+    {
         return getInput(uiKillCount);
     }
 
-    void setKillCountInput(int value) {
+    void setKillCountInput(int value)
+    {
         setInput(uiKillCount, value);
     }
 
-    double getDropsReceivedInput() {
+    double getDropsReceivedInput()
+    {
         return getInput(uiDropsReceived);
     }
 
-    void setDropsReceivedInput(int value) {
+    void setDropsReceivedInput(int value)
+    {
         setInput(uiDropsReceived, value);
     }
 
-    private double getInput(JTextField field) {
-        try {
-            if (field.getText().contains("/")) {
+    private double getInput(JTextField field)
+    {
+        try
+        {
+            if (field.getText().contains("/"))
+            {
                 String[] fraction = field.getText().split("/");
-                return Double.valueOf(fraction[0])/Double.valueOf(fraction[1]);
+                return Double.parseDouble(fraction[0]) / Double.parseDouble(fraction[1]);
             }
-            return Double.valueOf(field.getText());
-        } catch (NumberFormatException e) {
+            return Double.parseDouble(field.getText());
+        } catch (NumberFormatException e)
+        {
             return 0.0;
         }
     }
 
-    private void setInput(JTextField field, Object value) {
+    private void setInput(JTextField field, Object value)
+    {
         field.setText(String.valueOf(value));
     }
 
-    private JTextField addComponent(String label) {
+    private JTextField addComponent(String label)
+    {
         final JPanel container = new JPanel();
         container.setLayout(new GridLayout(1, 2, 0, 4));
 

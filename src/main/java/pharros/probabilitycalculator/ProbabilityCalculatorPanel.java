@@ -6,12 +6,14 @@ import net.runelite.client.ui.PluginPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
-class ProbabilityCalculatorPanel extends PluginPanel {
+class ProbabilityCalculatorPanel extends PluginPanel
+{
 
     private ProbabilityCalculatorInputArea inputArea;
     private ProbabilityCalculatorOutputArea outputArea;
 
-    ProbabilityCalculatorPanel(ProbabilityCalculatorInputArea inputArea, ProbabilityCalculatorOutputArea outputArea) {
+    ProbabilityCalculatorPanel(ProbabilityCalculatorInputArea inputArea, ProbabilityCalculatorOutputArea outputArea)
+    {
         super();
         this.inputArea = inputArea;
         this.outputArea = outputArea;
@@ -24,7 +26,7 @@ class ProbabilityCalculatorPanel extends PluginPanel {
         c.gridx = 0;
         c.gridy = 0;
 
-        inputArea.setBorder(new EmptyBorder(12,0,12,0));
+        inputArea.setBorder(new EmptyBorder(12, 0, 12, 0));
         inputArea.setBackground(ColorScheme.DARK_GRAY_COLOR);
 
         add(inputArea, c);
