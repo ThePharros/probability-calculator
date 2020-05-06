@@ -71,7 +71,7 @@ public class ProbabilityCalculatorInputArea extends JPanel
             return Double.parseDouble(field.getText());
         } catch (NumberFormatException e)
         {
-            return 0.0;
+            return 0.1;
         }
     }
 
