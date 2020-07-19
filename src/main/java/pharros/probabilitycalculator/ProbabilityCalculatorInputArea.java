@@ -29,12 +29,12 @@ public class ProbabilityCalculatorInputArea extends JPanel
         uiDropsReceived = addComponent("Drops Received:");
     }
 
-    double getDropRateInput()
+    String getDropRateInput()
     {
-        return getInput(uiDropRate);
+        return getInputDropRate(uiDropRate);
     }
 
-    void setDropRateInput(double value)
+    void setDropRateInput(String value)
     {
         setInput(uiDropRate, value);
     }
@@ -59,19 +59,56 @@ public class ProbabilityCalculatorInputArea extends JPanel
         setInput(uiDropsReceived, value);
     }
 
-    private double getInput(JTextField field)
+	private double getInput(JTextField field)
+	{
+		try
+		{
+			if (field.getText().contains("/"))
+			{
+				String[] fraction = field.getText().split("/");
+				return Double.parseDouble(fraction[0]) / Double.parseDouble(fraction[1]);
+			}
+			return Double.parseDouble(field.getText());
+		}
+		catch (NumberFormatException e)
+		{
+			return 0.1;
+		}
+	}
+
+    private String getInputDropRate(JTextField field)
     {
+    	field.setText(field.getText().trim());
         try
         {
-            if (field.getText().contains("/"))
+        	// make sure numerator//denominator is not happening
+            if (field.getText().contains("/") && field.getText().replaceAll("/", "").length() == field.getText().length() - 1)
             {
-                String[] fraction = field.getText().split("/");
-                return Double.parseDouble(fraction[0]) / Double.parseDouble(fraction[1]);
+				String numerator = field.getText().split("/")[0];
+				String denominator = field.getText().split("/")[1];
+
+				if (tryParseDouble(numerator) && tryParseDouble(denominator))
+				{
+					return field.getText();
+				}
+				else
+				{
+					return "0.1";
+				}
             }
-            return Double.parseDouble(field.getText());
-        } catch (NumberFormatException e)
+
+            if (tryParseDouble(field.getText()))
+            {
+            	return field.getText();
+			}
+            else
+            {
+            	return "0.1";
+			}
+        }
+        catch (NumberFormatException e)
         {
-            return 0.1;
+			return "0.1";
         }
     }
 
@@ -103,4 +140,17 @@ public class ProbabilityCalculatorInputArea extends JPanel
 
         return uiInput.getTextField();
     }
+
+	boolean tryParseDouble(String input)
+	{
+		try
+		{
+			Double.parseDouble(input);
+			return true;
+		}
+		catch (NumberFormatException e)
+		{
+			return false;
+		}
+	}
 }
