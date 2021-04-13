@@ -80,25 +80,33 @@ public class ProbabilityCalculatorPlugin extends Plugin
 
     private void onFieldDropRateUpdated()
     {
-        dropRate = input.getDropRateInput();
+        if (input.getDropRateInput().contains("/"))
+        {
+            String num = input.getDropRateInput().split("/")[0];
+            String den = input.getDropRateInput().split("/")[1];
+            dropRate = Double.parseDouble(num) / Double.parseDouble(den);
+        } else
+        {
+            dropRate = Double.parseDouble(input.getDropRateInput());
+        }
         updateInputFields();
     }
 
     private void onFieldKillCountUpdated()
     {
-        killCount = (int) input.getKillCountInput();
+        killCount = input.getKillCountInput();
         updateInputFields();
     }
 
     private void onFieldDropsReceivedUpdated()
     {
-        dropsReceived = (int) input.getDropsReceivedInput();
+        dropsReceived = input.getDropsReceivedInput();
         updateInputFields();
     }
 
     private void updateInputFields()
     {
-        input.setDropRateInput(dropRate);
+        input.setDropRateInput(input.getDropRateInput());
         input.setDropsReceivedInput(dropsReceived);
         input.setKillCountInput(killCount);
 

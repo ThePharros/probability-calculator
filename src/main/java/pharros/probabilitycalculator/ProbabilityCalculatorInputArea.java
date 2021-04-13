@@ -29,19 +29,50 @@ public class ProbabilityCalculatorInputArea extends JPanel
         uiDropsReceived = addComponent("Drops Received:");
     }
 
-    double getDropRateInput()
+    String getDropRateInput()
     {
-        return getInput(uiDropRate);
+        JTextField field = uiDropRate;
+        field.setText(field.getText().trim());
+        try
+        {
+            if (field.getText().contains("/") && field.getText().replaceAll("/", "").length() == field.getText().length() - 1)
+            {
+                String num = field.getText().split("/")[0];
+                String den = field.getText().split("/")[1];
+                if (tryParseDouble(num) && tryParseDouble(den))
+                {
+                    return field.getText();
+                } else
+                {
+                    return "0.1";
+                }
+            } else if (tryParseDouble(field.getText()))
+            {
+                return field.getText();
+            } else
+            {
+                return "0.1";
+            }
+        } catch (NumberFormatException e)
+        {
+            return "0.1";
+        }
     }
 
-    void setDropRateInput(double value)
+    void setDropRateInput(String value)
     {
         setInput(uiDropRate, value);
     }
 
-    double getKillCountInput()
+    int getKillCountInput()
     {
-        return getInput(uiKillCount);
+        if (tryParseInt(uiKillCount.getText()))
+        {
+            return Integer.parseInt(uiKillCount.getText());
+        } else
+        {
+            return 100;
+        }
     }
 
     void setKillCountInput(int value)
@@ -49,9 +80,15 @@ public class ProbabilityCalculatorInputArea extends JPanel
         setInput(uiKillCount, value);
     }
 
-    double getDropsReceivedInput()
+    int getDropsReceivedInput()
     {
-        return getInput(uiDropsReceived);
+        if (tryParseInt(uiDropsReceived.getText()))
+        {
+            return Integer.parseInt(uiDropsReceived.getText());
+        } else
+        {
+            return 1;
+        }
     }
 
     void setDropsReceivedInput(int value)
@@ -59,25 +96,35 @@ public class ProbabilityCalculatorInputArea extends JPanel
         setInput(uiDropsReceived, value);
     }
 
-    private double getInput(JTextField field)
-    {
-        try
-        {
-            if (field.getText().contains("/"))
-            {
-                String[] fraction = field.getText().split("/");
-                return Double.parseDouble(fraction[0]) / Double.parseDouble(fraction[1]);
-            }
-            return Double.parseDouble(field.getText());
-        } catch (NumberFormatException e)
-        {
-            return 0.1;
-        }
-    }
-
     private void setInput(JTextField field, Object value)
     {
         field.setText(String.valueOf(value));
+    }
+
+    boolean tryParseDouble(String input)
+    {
+        try
+        {
+            Double.parseDouble(input);
+            return true;
+        } catch (NumberFormatException e)
+        {
+            return false;
+        }
+    }
+
+    boolean tryParseInt(String input)
+    {
+        try
+        {
+            {
+                Integer.parseInt(input);
+                return true;
+            }
+        } catch (NumberFormatException e)
+        {
+            return false;
+        }
     }
 
     private JTextField addComponent(String label)
